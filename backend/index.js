@@ -17,7 +17,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["https://laundromat.eduos.com.ng", "http://localhost:5173"],
+    origin: ["https://laundromat.eduos.com.ng", "http://localhost:5173", "https://finccleanapp.vercel.app"],
     credentials: true,
   })
 );
