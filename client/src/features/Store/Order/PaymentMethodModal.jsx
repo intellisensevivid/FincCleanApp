@@ -12,7 +12,7 @@ const PaymentMethodModal = () => {
   );
   const dispatch = useDispatch();
   const order = useSelector((state) => state.order);
-  const [createOrder, { isError, error }] = useCreateOrderMutation();
+  const [createOrder, { isLoading, isError, error }] = useCreateOrderMutation();
 
   const handleMethodSelect = (method) => {
     dispatch(setPaymentMethod(method));
@@ -143,9 +143,20 @@ const PaymentMethodModal = () => {
             <div className="flex justify-end mt-8">
               <button
                 onClick={handleCreateOrder}
-                className="btn btn-success text-lg text-white"
+                className={`btn btn-success text-lg text-white ${
+                    isLoading
+                      ? `cursor-not-allowed bg-opacity-50 hover:bg-opacity-50 focus:ring-opacity-0`
+                      : ""
+                  }`}
               >
-                Submit
+                {!isLoading ? (
+                    <span>Submit</span>
+                  ) : (
+                    <span className="flex items-center justify-center">
+                      <span className="pr-2">Submitting</span>{" "}
+                      <span className="loading loading-bars loading-xs"></span>
+                    </span>
+                  )}
               </button>
             </div>
             <div>
