@@ -51,6 +51,13 @@ const getOrder = asyncHandler(async (req, res) => {
   res.json(order);
 });
 
+// @desc Update order processing status
+const orderProcessing = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const { processingStatus } = req.body;
+  const order = await Order.findById(orderId);
+})
+
 // @desc  Create Order
 // @route POST /api/orders/create
 // @access Private

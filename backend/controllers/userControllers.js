@@ -14,7 +14,7 @@ const getUserDetails = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
-// @desc  Create new user
+// @desc  Create new user (employees)
 // @route POST api/users/create
 // @access Private
 const createUser = asyncHandler(async (req, res) => {
