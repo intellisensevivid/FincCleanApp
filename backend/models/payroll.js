@@ -3,58 +3,58 @@ const mongoose = require('mongoose');
 const payrollSchema = new mongoose.Schema({
   business: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Business', // Assuming you have a Business model
-    required: true
+    ref: "Business", // Assuming you have a Business model
+    required: true,
   },
   employee: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Employee', // Assuming you have an Employee model
-    required: true
+    ref: "User", // Assuming you have an Employee model
+    required: true,
   },
   startDate: {
     type: Date,
-    required: true
+    required: true,
   },
   endDate: {
     type: Date,
-    required: true
+    required: true,
   },
   totalHours: {
     type: Number,
-    required: true
+    required: true,
   },
   regularHours: {
     type: Number,
-    required: true
+    required: true,
   },
   overtimeHours: {
     type: Number,
-    required: true
+    required: true,
   },
   hourlyRate: {
     type: Number,
-    required: true
+    required: true,
   },
   regularPay: {
     type: Number,
-    required: true
+    required: true,
   },
   overtimePay: {
     type: Number,
-    required: true
+    required: true,
   },
   grossPay: {
     type: Number,
-    required: true
+    required: true,
   },
   deductions: {
     type: Number,
-    required: true
+    required: true,
   },
   netPay: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const Payroll = mongoose.model('Payroll', payrollSchema);

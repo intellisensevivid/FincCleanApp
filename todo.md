@@ -1,7 +1,18 @@
 + Implement scheduling features for regular pickup 
 
+## still working on
++   Pickup API and model
++   Delivery API and model
++   payroll APIS
 
+## worked on 
++   shift APIS
++   payroll APIS
++   orderProcessingStatus
++   assignOrderToMachine
 
+## Thing to think on
++   if an order is cancelled then Pickup/Delivery should be cancelled
 
 
 Payroll Flow:

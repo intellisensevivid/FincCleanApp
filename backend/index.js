@@ -34,9 +34,12 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
+// batch B of dev 
 app.use("/api/shift", require("./routes/shiftRoute"));
 app.use("/api/payroll", require("./routes/payrollRoute"));
 app.use("/api/attendance", require("./routes/attendanceRoute"));
+app.use("/api/pickup", require("./routes/pickupRoute"));
+app.use("/api/delivery", require("./routes/deliveryRoute"));
 app.use(errorHandler);
 
 
