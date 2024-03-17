@@ -1,7 +1,6 @@
 const Payroll = require('../models/payroll')
 const asyncHandler = require('express-async-handler')
-const Attendance = require('../models/attendance');
-const Employee = require('../models/Employee');
+// const Attendance = require('../models/attendance');
 
 
 const getAllPayroll = asyncHandler(async (req, res) => {

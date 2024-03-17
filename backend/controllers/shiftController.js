@@ -21,13 +21,12 @@ const getSingleShiftsByiD = asyncHandler(async (req, res) => {
     return res.json({message:"success",status:200,data:shifts})
 })
 
-// @desc Get all shift
+// @desc search all shift
 // @route GET /API/shift/search
 const queryShifts = asyncHandler( async (req, res) => {
 
       const { startDate, endDate, assignedEmployee, task } = req.query;
 
-      // Build query object based on provided criteria
       const query = {};
       if (startDate) {
         query.date = { $gte: new Date(startDate) };
@@ -42,16 +41,11 @@ const queryShifts = asyncHandler( async (req, res) => {
         query.task = { $regex: task, $options: "i" };
       }
 
-      // Execute the query to search shifts
       const shifts = await Shift.find(query);
 
-      // Send the search results as JSON response
       res.json(shifts);
   },
-
-  // Add more methods as needed
 )
-module.exports = shiftController;
 
 
 
@@ -61,7 +55,7 @@ module.exports = shiftController;
 const createShift = asyncHandler(async (req, res) => {
     const { date, startTime, endTime, assignedEmployee, task } = req.body;
     const newShift = await Shift.create({
-        business: req.user.business, // Associate the shift with the logged-in business
+        business: req.user.business, 
         date,
         startTime,
         endTime,

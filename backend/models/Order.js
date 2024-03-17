@@ -26,31 +26,22 @@ const OrderSchema = new mongoose.Schema(
         },
       },
     ],
+    machine: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Machine",
+    },
     orderType: {
       type: String,
       enum: ["inStore", "pickupAndDelivery", "pickup", "delivery"],
       required: true,
     },
-    pickupDate: {
-      type: Date,
+    pickup: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Pickup'
     },
-    pickupTime: {
-      type: Date,
-    },
-    pickupStartTime: {
-      type: Date,
-    },
-    pickupEndTime: {
-      type: Date,
-    },
-    deliveryDate: {
-      type: Date,
-    },
-    deliveryStartTime: {
-      type: Date,
-    },
-    deliveryEndTime: {
-      type: Date,
+    delivery: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Delivery'
     },
     isActive: {
       type: Boolean,

@@ -1,4 +1,5 @@
 const Customer = require("../models/Customer");
+const Machine = require("../models/Machine");
 const Order = require("../models/Order");
 const asyncHandler = require("express-async-handler");
 
@@ -52,10 +53,44 @@ const getOrder = asyncHandler(async (req, res) => {
 });
 
 // @desc Update order processing status
-const orderProcessing = asyncHandler(async (req, res) => {
+const orderProcessingStatus = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
-  const { processingStatus } = req.body;
+  // if order is in washing/drying and folding, then order is in progress
+  // if order has not been attended to, then order is in pending
+  // if order has been completed, then order is completed
+  const { status } = req.body;
+  if (!status) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  const order = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
+  if (!order) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+  res.json(order);
+})
+
+// @desc  Assigning orders to machines
+const assignOrderToMachine = asyncHandler(async (req, res) => { 
+  const { orderId } = req.params;
+  const { machineId } = req.body;
+
+  // Check if order exists
   const order = await Order.findById(orderId);
+  if (!order) {
+    return res.status(404).json({ message: 'Order not found.' });
+  }
+
+  // Check if machine exists
+  const machine = await Machine.findById(machineId);
+  if (!machine) {
+    return res.status(404).json({ message: 'Machine not found.' });
+  }
+
+  // Assign order to machine
+  order.machine = machineId;
+  await order.save();
+
+  res.json({ message: 'Order assigned to machine successfully.', data:order });
 })
 
 // @desc  Create Order
@@ -278,4 +313,6 @@ module.exports = {
   updateOrderStatus,
   updateOrderPaymentStatus,
   getOrderAnalytics,
+  orderProcessingStatus,
+  assignOrderToMachine
 };
