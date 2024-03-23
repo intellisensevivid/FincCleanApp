@@ -10,6 +10,8 @@ import {
 } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
 import { setSelectedTab } from "../features/Store/storeSlice";
+import { setActiveTab } from "../app/indexSlice";
+import { Tabs } from "../config/tabs";
 
 const MobileNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,25 +62,44 @@ const MobileNav = () => {
 };
 
 const AdminNav = () => {
+  const [toggleNav, setToggleNav] = useState(false);
+  const dispatch = useDispatch();
+
+  const tabs = [
+    "Store",
+    "Products",
+    "Users",
+    "Hardware",
+    // "Search",
+    // "Admin",
+  ];
   return (
-    <>
-      <button className="ml-2 dropdown">
+    <div className="flex flex-col px-3 relative">
+      <button
+        className="ml-2 dropdown"
+        onClick={() => setToggleNav(!toggleNav)}
+      >
         <BiMenu className="text-xl" />
       </button>
-      {/* <div className="dropdown-content">
-        <ul className="flex flex-col gap-2">
-          <li>Search</li>
-          <li>Metrics</li>
-          <li>Products</li>
-          <li>Users</li>
-          <li>Hardware</li>
-          <li>Search</li>
-          <li>Search</li>
-          <li>Search</li>
-          <li>Admin</li>
-        </ul>
-      </div> */}
-    </>
+      {toggleNav && (
+        <div className="dropdown-content absolute z-10 top-10 bg-gray-100">
+          <ul className="flex flex-col gap-2">
+            {tabs.map((i, v) => (
+              <li key={v} className="px-3 py-1.5 cursor-pointer">
+                <a
+                  onClick={() => {
+                    setToggleNav(false);
+                    dispatch(setActiveTab(i.toUpperCase()));
+                  }}
+                >
+                  {i}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -105,6 +126,7 @@ const NavContent = () => {
 
   const handleTabClick = (tab) => {
     dispatch(setSelectedTab(tab));
+    dispatch(setActiveTab(Tabs.default));
   };
 
   return (

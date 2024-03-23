@@ -29,6 +29,7 @@ const userCreate = Joi.object().keys({
   password: Joi.string().pattern(PASSWORD_REGEX).min(8).required(),
   phoneNumber: Joi.string().required(),
   role: Joi.string().required(),
+  permissions: Joi.array(),
   hourlyRate: Joi.number(),
   monthlyPay: Joi.number(),
   weeklyHours: Joi.number(),

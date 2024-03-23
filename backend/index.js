@@ -40,6 +40,8 @@ app.use("/api/payroll", require("./routes/payrollRoute"));
 app.use("/api/attendance", require("./routes/attendanceRoute"));
 app.use("/api/pickup", require("./routes/pickupRoute"));
 app.use("/api/delivery", require("./routes/deliveryRoute"));
+app.use("/api/user", require("./routes/permission"));
+
 app.use(errorHandler);
 
 
