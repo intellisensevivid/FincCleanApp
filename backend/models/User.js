@@ -21,6 +21,12 @@ const UserSchema = new mongoose.Schema(
       ref: "Role",
       required: true,
     },
+    // incase if extra permissions are added to employee
+    permissions: [
+      {
+        type: String,
+      },
+    ],
     business: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Business",

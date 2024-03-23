@@ -26,6 +26,10 @@ const OrderSchema = new mongoose.Schema(
         },
       },
     ],
+    machine: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Machine",
+    },
     orderType: {
       type: String,
       enum: ["inStore", "pickupAndDelivery", "pickup", "delivery"],
@@ -51,6 +55,14 @@ const OrderSchema = new mongoose.Schema(
     },
     deliveryEndTime: {
       type: Date,
+    },
+    pickup: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Pickup",
+    },
+    delivery: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Delivery",
     },
     isActive: {
       type: Boolean,

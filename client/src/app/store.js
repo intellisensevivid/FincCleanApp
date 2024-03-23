@@ -16,6 +16,7 @@ import storeSlice from "../features/Store/storeSlice";
 import authSlice from "../features/Auth/authSlice";
 import modalSlice from "./modalSlice";
 import orderSlice from "../features/Store/Order/orderSlice";
+import indexSlice from "./indexSlice";
 
 const persistConfig = {
   key: "root",
@@ -29,6 +30,7 @@ const rootReducers = combineReducers({
   store: storeSlice,
   modal: modalSlice,
   order: orderSlice,
+  index: indexSlice,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 

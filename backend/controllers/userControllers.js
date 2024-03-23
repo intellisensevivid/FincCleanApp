@@ -1,6 +1,11 @@
 const User = require("../models/User");
 const Role = require("../models/Role");
 const asyncHandler = require("express-async-handler");
+const {
+  permissionsData,
+  isValidPermission,
+} = require("../config/RolesAndPermission");
+const Business = require("../models/Business");
 
 // @desc  Get user details
 // @route GET api/users/:userId
@@ -14,13 +19,14 @@ const getUserDetails = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
-// @desc  Create new user
+// @desc  Create new user (employees)
 // @route POST api/users/create
 // @access Private
 const createUser = asyncHandler(async (req, res) => {
   const {
     fullName,
     phoneNumber,
+    permissions,
     email,
     password,
     role,
@@ -51,6 +57,7 @@ const createUser = asyncHandler(async (req, res) => {
     phoneNumber,
     business: req.user.business,
     role: userRole._id,
+    permissions,
     hourlyRate,
     monthlyPay,
     weeklyHours,
@@ -66,6 +73,7 @@ const updateUser = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const {
     fullName,
+    permissions,
     phoneNumber,
     email,
     password,
@@ -76,9 +84,9 @@ const updateUser = asyncHandler(async (req, res) => {
     isLockedOut,
   } = req.body;
 
-  const userRole = await Role.find({ name: role });
+  const userRole = await Role.findOne({ name: role });
 
-  const updatedUser = await User.findOneAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     { _id: userId },
     {
       fullName,
@@ -86,6 +94,7 @@ const updateUser = asyncHandler(async (req, res) => {
       email,
       password,
       role: userRole?._id,
+      permissions,
       hourlyRate,
       monthlyPay,
       weeklyHours,
@@ -106,7 +115,7 @@ const updateUser = asyncHandler(async (req, res) => {
 // @access Private
 const deleteUser = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  await User.findOneAndDelete({ _id: userId });
+  await User.findByIdAndDelete({ _id: userId });
   res.json({ message: "User successfully deleted" });
 });
 
@@ -132,10 +141,81 @@ const changePassword = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Password changed successfully" });
 });
 
+// @desc get all store users including buisness owner
+const getAllUsers = asyncHandler(async (req, res) => {
+  const user = await User.find({ business: req.user.business })
+    .populate("business", "name")
+    .populate("role", "name")
+    .exec();
+  // const owner = await Business.find({ _id: req.user.business }).populate(
+  //   "owner"
+  // );
+  // console.log(owner);
+  return res.json({ data: user });
+});
+// @desc get all permissions
+const getAllPermissions = asyncHandler(async (req, res, next) => {
+  return res.json({ data: permissionsData });
+});
+
+// @desc assign user permission
+const assignPermission = asyncHandler(async (req, res) => {
+  const { permissions } = req.body;
+  const { userId } = req.params;
+  if (!userId || !permissions || !Array.isArray(permissions)) {
+    res.status(400).json({ message: "Invalid input data" });
+  }
+
+  if (!isValidPermission(permissions)) {
+    // Proceed with assigning the permissions or performing other operations
+    res.status(400).json({ message: "Invalid permission data" });
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(400).json({ message: "User not found" });
+  }
+
+  user.permissions = permissions;
+  await user.save();
+});
+
+// update user permission
+// @desc assign user permission
+const removePermission = asyncHandler(async (req, res) => {
+  const { permissions } = req.body;
+  const { userId } = req.params;
+  if (!userId || !permissions || !Array.isArray(permissions)) {
+    res.status(400).json({ message: "Invalid input data" });
+  }
+
+  if (!isValidPermission(permissions)) {
+    // Proceed with assigning the permissions or performing other operations
+    res.status(400).json({ message: "Invalid permission data" });
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(400).json({ message: "User not found" });
+  }
+
+  user.permissions = user.permissions.filter((k) => !permission.include(k));
+  await user.save();
+});
+
+const getRoles = asyncHandler(async (req, res) => {
+  const roles = await Role.find().exec();
+  return res.json({ message: "success", data: roles });
+});
 module.exports = {
   getUserDetails,
+  getRoles,
   createUser,
   updateUser,
   deleteUser,
   changePassword,
+  assignPermission,
+  getAllPermissions,
+  removePermission,
+  getAllUsers,
 };

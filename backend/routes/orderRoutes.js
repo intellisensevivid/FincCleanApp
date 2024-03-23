@@ -11,6 +11,8 @@ const {
   updateOrderStatus,
   updateOrderPaymentStatus,
   getOrderAnalytics,
+  orderProcessingStatus,
+  assignOrderToMachine,
 } = require("../controllers/orderControllers");
 const { verifyToken } = require("../middleware/authMiddleware");
 const schemaValidator = require("../middleware/schemaValidator");
@@ -26,6 +28,8 @@ router.get(
 router.get("/analytics", verifyToken, adminMiddleware, getOrderAnalytics);
 router.get("/:orderId", verifyToken, getOrder);
 router.post("/", verifyToken, schemaValidator("orderCreate"), createOrder);
+router.patch("/:orderId/status", verifyToken, orderProcessingStatus);
+router.patch("/:orderId/machine", verifyToken, assignOrderToMachine);
 router.put("/:orderId", verifyToken, updateOrder);
 router.delete("/:orderId/", verifyToken, adminMiddleware, deleteOrder);
 router.get("/customer/:customerId/", verifyToken, getOrdersByCustomer);

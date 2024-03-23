@@ -9,8 +9,12 @@ const {
   updateUser,
   deleteUser,
   changePassword,
+  getAllUsers,
+  getRoles,
 } = require("../controllers/userControllers");
 
+router.get("/store", verifyToken, getAllUsers);
+router.get("/roles", verifyToken, getRoles);
 router.get("/:userId", verifyToken, getUserDetails);
 router.post(
   "/create",
@@ -19,7 +23,7 @@ router.post(
   adminMiddleware,
   createUser
 );
-router.put(
+router.patch(
   "/:userId/update",
   verifyToken,
   adminMiddleware,
@@ -27,7 +31,7 @@ router.put(
   updateUser
 );
 router.delete("/:userId/delete", verifyToken, adminMiddleware, deleteUser);
-router.put(
+router.patch(
   "/changePassword",
   verifyToken,
   adminMiddleware,
