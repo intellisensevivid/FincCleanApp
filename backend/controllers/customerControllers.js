@@ -25,12 +25,13 @@ const createCustomer = asyncHandler(async (req, res) => {
 // @route POST /api/customers/createAppCustomer
 // @access Public
 const createAppCustomer = asyncHandler(async (req, res) => {
-  const { email, password, business } = req.body;
+  const { email, password, business, name, telephone } = req.body;
   // check for existing customer
   if (email && password) {
     const existingCustomer = await Customer.findOne({
       email,
       business,
+      telephone,
     });
     if (existingCustomer && !existingCustomer.password) {
       existingCustomer.password = password;
@@ -43,7 +44,13 @@ const createAppCustomer = asyncHandler(async (req, res) => {
     }
 
     if (!existingCustomer) {
-      const customer = await Customer.create({ email, password, business });
+      const customer = await Customer.create({
+        email,
+        password,
+        business,
+        name,
+        telephone,
+      });
       return res.status(201).json(customer);
     }
   } else {

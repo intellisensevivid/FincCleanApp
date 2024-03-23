@@ -14,7 +14,7 @@ const StoreHomePage = () => {
     <>
       <section className="px-4 h-full text-sm md:text-base bg-gradient-to-b overflow-y-auto from-gray-100 via-blue-50 to-blue-100">
         {/* product section */}
-        {activeTab === Tabs.default && (
+        {(activeTab === Tabs.default || activeTab === Tabs.store) && (
           <div className="h-full leading-loose flex flex-col pt-2 pb-2">
             <SectionNav />
             <div className="grid grid-cols-12 gap-4 h-full">

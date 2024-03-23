@@ -10,6 +10,7 @@ const UserFormModal = ({
   onSave,
   onClose,
   isOpen,
+  error,
 }) => {
   const [formData, setFormData] = useState({
     fullName: userData?.fullName || "",
@@ -145,6 +146,11 @@ const UserFormModal = ({
           </div>
 
           <div>
+            {error && (
+              <div className="bg-red-500 p-1.5 text-center text-white rounded-lg break-words w-8/12 mx-auto">
+                <p>{error}</p>
+              </div>
+            )}
             <form>
               {/* user details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

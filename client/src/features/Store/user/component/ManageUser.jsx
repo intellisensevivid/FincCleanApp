@@ -19,6 +19,7 @@ function ManageUser({ users }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [formType, setFormType] = useState("add");
+  const [formError, setFormError] = useState("");
 
   const [addStoreUser, { isLoading, isError, error }] =
     useAddStoreUserMutation();
@@ -43,6 +44,7 @@ function ManageUser({ users }) {
 
   const handleSubmit = async (mutatedData) => {
     // make API call
+    setFormError("");
 
     try {
       if (formType === "add") {
@@ -60,6 +62,12 @@ function ManageUser({ users }) {
         setIsModalOpen(false);
       }
     } catch (error) {
+      let errorMessage = error || editError;
+      console.log(errorMessage, "oasiiiiiii");
+      setFormError(errorMessage.data.error.details[0].message || error.message);
+      setTimeout(() => {
+        setFormError();
+      }, 4000);
       console.error(error);
     }
   };
@@ -113,7 +121,7 @@ function ManageUser({ users }) {
         <UserFormModal
           userData={formType === "edit" ? selectedUser : null}
           loading={isLoading || eIsLoading}
-          error={error || editError}
+          error={formError}
           formType={formType}
           permissions={permissionData}
           onSave={handleSubmit}

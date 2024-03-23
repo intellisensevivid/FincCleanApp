@@ -5,7 +5,9 @@ const hasPermission = (requiredPermission) => (req, res, next) => {
     !user.permissions ||
     !user.permissions.includes(requiredPermission)
   ) {
-    return res.status(403).json({ error: "Unauthorized" });
+    return res
+      .status(403)
+      .json({ error: "You do not have permission to access this." });
   }
   next();
 };
