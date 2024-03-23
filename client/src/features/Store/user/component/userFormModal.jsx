@@ -44,6 +44,7 @@ const UserFormModal = ({
       weeklyHours: userData?.weeklyHours || "",
       phoneNumber: userData?.phoneNumber || "",
     });
+    setSelectedPermissions(userData.permissions);
   }, [userData]);
 
   useEffect(() => {
