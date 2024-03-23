@@ -19,13 +19,13 @@ const getSiglePayroll = asyncHandler(async (req, res) => {
 
 const queryPayroll = asyncHandler(async (req, res) => {
   try {
-    const { employeeId, startDate, endDate } = req.query;
+    const { userId, startDate, endDate } = req.query;
 
     let query = {};
 
-    // If employeeId is provided, filter payroll entries for the specific employee
-    if (employeeId) {
-      query.employee = employeeId;
+    // If userid is provided, filter payroll entries for the specific employee
+    if (userId) {
+      query.user = userId;
     }
 
     // If startDate and endDate are provided, filter payroll entries within the specified date range

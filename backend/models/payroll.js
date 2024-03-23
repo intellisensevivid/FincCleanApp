@@ -6,7 +6,7 @@ const payrollSchema = new mongoose.Schema({
     ref: "Business", // Assuming you have a Business model
     required: true,
   },
-  employee: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", // Assuming you have an Employee model
     required: true,

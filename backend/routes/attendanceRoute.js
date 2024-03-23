@@ -7,7 +7,7 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 
 router.get('/',verifyToken,getAllAttendance)
-router.get('/:employeeId',verifyToken, getAttendanceForEmployee)
+router.get("/:userId", verifyToken, getAttendanceForEmployee);
 router.post('/clock-in',verifyToken,clockIn)
 router.post('/clock-out',verifyToken, clockOut)
 

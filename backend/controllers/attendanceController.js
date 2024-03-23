@@ -2,16 +2,16 @@ const Attendance = require('../models/attendance');
 
 const clockIn = async (req, res) => {
   try {
-    const { employeeId, shiftId } = req.body;
+    const { userId, shiftId } = req.body;
     const clockInTime = new Date();
     const attendance = new Attendance({
-      employee: employeeId,
+      user: userId,
       shift: shiftId,
       clockIn: clockInTime,
-      business: req.user.business
+      business: req.user.business,
     });
     await attendance.save();
-    res.status(201).json({ message: 'Clock-in recorded successfully.' });
+    res.status(201).json({ message: "Clock-in recorded successfully." });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -22,11 +22,11 @@ const clockOut = async (req, res) => {
     const { attendanceId } = req.params;
     const attendance = await Attendance.findById(attendanceId);
     if (!attendance) {
-      return res.status(404).json({ message: 'Attendance not found.' });
+      return res.status(404).json({ message: "Attendance not found." });
     }
     attendance.clockOut = new Date();
     await attendance.save();
-    res.json({ message: 'Clock-out recorded successfully.' });
+    res.json({ message: "Clock-out recorded successfully." });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -34,8 +34,8 @@ const clockOut = async (req, res) => {
 
 const getAttendanceForEmployee = async (req, res) => {
   try {
-    const { employeeId } = req.params;
-    const attendance = await Attendance.find({ employee: employeeId });
+    const { userId } = req.params;
+    const attendance = await Attendance.find({ user: userId });
     res.json(attendance);
   } catch (error) {
     res.status(500).json({ error: error.message });
