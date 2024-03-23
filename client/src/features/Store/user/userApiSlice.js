@@ -8,6 +8,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
     getStoreUsers: builder.query({
       query: () => "/users/store",
+      providesTags: (result, error, id) =>
+        result
+          ? [
+              ...result.data.map(({ id }) => ({ type: "Users", id })),
+              { type: "Users", id: "LIST" },
+            ]
+          : [{ type: "Users", id: "LIST" }],
     }),
     getUserRoles: builder.query({
       query: () => "/users/roles",
@@ -25,9 +32,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { userId }) => [
-        { type: "Users", id: userId },
-      ],
+      invalidatesTags: (result, error, id) => [{ type: "Users", id: "LIST" }],
     }),
     deleteStoreUser: builder.mutation({
       query: ({ userId, body }) => ({
@@ -35,6 +40,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
         body,
       }),
+      invalidatesTags: (result, error, id) => [{ type: "Users", id: "LIST" }],
     }),
   }),
 });
