@@ -25,6 +25,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: (result, error, id) => [{ type: "Users", id: "LIST" }],
     }),
     editStoreUser: builder.mutation({
       query: ({ userId, body }) => ({
