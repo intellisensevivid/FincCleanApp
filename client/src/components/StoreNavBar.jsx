@@ -69,9 +69,9 @@ const AdminNav = () => {
     "Store",
     "Products",
     "Users",
-    "Hardware",
+    // "Hardware",
     // "Search",
-    // "Admin",
+    "Admin",
   ];
   return (
     <div className="flex flex-col px-3 relative">

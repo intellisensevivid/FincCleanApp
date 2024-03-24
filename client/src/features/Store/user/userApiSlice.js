@@ -36,10 +36,9 @@ export const userApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: (result, error, id) => [{ type: "Users", id: "LIST" }],
     }),
     deleteStoreUser: builder.mutation({
-      query: ({ userId, body }) => ({
+      query: ({ userId }) => ({
         url: `/users/${userId}/delete`,
         method: "DELETE",
-        body,
       }),
       invalidatesTags: (result, error, id) => [{ type: "Users", id: "LIST" }],
     }),
