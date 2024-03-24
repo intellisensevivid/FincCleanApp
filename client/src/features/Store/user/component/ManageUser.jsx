@@ -76,7 +76,7 @@ function ManageUser({ users }) {
       <div className="flex items-center justify-between w-full">
         <h1 className="text-3xl font-bold">Manage Users account</h1>
         <button
-          // onClick={() => handleAddUser()}
+          onClick={() => handleAddUser()}
           className="bg-blue-500 text-white button px-3 py-1.5 rounded-lg"
         >
           Add User
