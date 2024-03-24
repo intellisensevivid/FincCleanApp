@@ -7,6 +7,7 @@ import PaymentMethodModal from "./Order/PaymentMethodModal";
 import UserPage from "./user/UserPage";
 import { useSelector } from "react-redux";
 import { Tabs } from "../../config/tabs";
+import Admin from "./admin/Admin";
 
 const StoreHomePage = () => {
   const { activeTab } = useSelector((state) => state.index);
@@ -30,6 +31,7 @@ const StoreHomePage = () => {
 
         {/* user section */}
         {activeTab === Tabs.user && <UserPage />}
+        {activeTab === Tabs.admin && <Admin />}
 
         {/*  */}
       </section>

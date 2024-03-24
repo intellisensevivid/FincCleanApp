@@ -166,7 +166,14 @@ const loginUser = asyncHandler(async (req, res) => {
     maxAge: 30 * 24 * 60 * 60 * 1000, //30 days (match refreshToken expiration)
   });
 
-  res.status(200).json({ message: "Login success" });
+  const foundUser = await User.findOne({ email })
+    .populate("business")
+    .populate("role")
+    .select("-password");
+
+  res
+    .status(200)
+    .json({ message: "Login success", data: foundUser, accessToken });
 });
 
 // @desc  Refresh token

@@ -3,7 +3,7 @@ import { useTable, useSortBy, useFilters, usePagination } from "react-table";
 import { RiEdit2Line } from "react-icons/ri";
 import { FaTrash } from "react-icons/fa";
 
-const UserTable = ({ columns, data, onEdit }) => {
+const UserTable = ({ columns, data, onEdit, onDelete }) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -71,7 +71,7 @@ const UserTable = ({ columns, data, onEdit }) => {
                     <RiEdit2Line className="text-blue-500 text-xl" />
                   </button>
                   {row.original.role.name !== "admin" && (
-                    <button onClick={() => onEdit(row.original)}>
+                    <button onClick={() => onDelete(row.original)}>
                       <FaTrash className="text-red-400 text-lg" />
                     </button>
                   )}

@@ -7,7 +7,9 @@ import UserTable from "./UserTable";
 import {
   useEditStoreUserMutation,
   useAddStoreUserMutation,
+  useDeleteStoreUserMutation,
 } from "../userApiSlice";
+import PopupModal from "../../../../components/PopupModal";
 
 function ManageUser({ users }) {
   const columns = [
@@ -23,6 +25,10 @@ function ManageUser({ users }) {
 
   const [addStoreUser, { isLoading, isError, error }] =
     useAddStoreUserMutation();
+  const [
+    deleteStoreUser,
+    { isLoading: delLoading, isError: delIsError, error: delError },
+  ] = useDeleteStoreUserMutation();
   const [
     editStoreUser,
     { isLoading: eIsLoading, isError: eIsError, error: editError },
@@ -40,6 +46,13 @@ function ManageUser({ users }) {
   const handleAddUser = () => {
     setFormType("add");
     setIsModalOpen(true);
+  };
+  const handleDeleteUser = async (user) => {
+    // window.alert("Are you sure you want to delete?");
+    setSelectedUser(user);
+    const res = await deleteStoreUser({
+      userId: user._id,
+    }).unwrap();
   };
 
   const handleSubmit = async (mutatedData) => {
@@ -63,13 +76,30 @@ function ManageUser({ users }) {
       }
     } catch (error) {
       let errorMessage = error || editError;
-      console.log(errorMessage, "oasiiiiiii");
       setFormError(errorMessage.data.error.details[0].message || error.message);
       setTimeout(() => {
         setFormError();
       }, 4000);
       console.error(error);
     }
+  };
+  const showDeleteConfirmation = () => {
+    PopupModal({
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete this user?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: handleDeleteUser,
+        },
+        {
+          label: "No",
+        },
+      ],
+      options: {
+        onClose: () => console.log("Modal closed"),
+      },
+    });
   };
   return (
     <div className="w-full ">
@@ -90,6 +120,7 @@ function ManageUser({ users }) {
             columns={columns}
             data={users.data}
             onEdit={handleEditUser}
+            onDelete={showDeleteConfirmation}
           />
         )}
         {/* {users.data.map((user) => {
