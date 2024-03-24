@@ -10,9 +10,9 @@ const {
   getStoreById,
 } = require("../controllers/storeController");
 
+router.get("/search", queryStore);
 router.get("/", verifyToken, getAllStores);
-router.get("/search", verifyToken, queryStore);
-router.get("/:businessId", verifyToken, getStoreById);
+router.get("/:businessId", getStoreById);
 
 // router.post("/",verifyToken,adminMiddleware, createShift)
 // router.patch("/:shiftId", verifyToken,adminMiddleware, createShift)
