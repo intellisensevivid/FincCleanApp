@@ -26,8 +26,15 @@ const getStoreById = asyncHandler(async (req, res) => {
 // @route   GET /api/stores/search?name=:name
 // @access  Public
 const queryStore = asyncHandler(async (req, res) => {
-  const { name } = req.body;
-  const stores = await Business.find({ name: { $regex: name, $options: "i" } });
+  const { name, location } = req.query;
+  const query = {};
+  if (name) {
+    query["name"] = { $regex: name, $options: "i" };
+  }
+  if (location) {
+    query["location"] = { $regex: location, $options: "i" };
+  }
+  const stores = await Business.find(query);
 
   res.status(200).json({ success: true, data: stores });
 });
