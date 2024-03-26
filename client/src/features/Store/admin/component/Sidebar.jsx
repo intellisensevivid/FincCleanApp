@@ -1,62 +1,73 @@
 import React, { useState } from "react";
-import { BiChevronDown } from "react-icons/bi";
+import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
+import { setSelectedTab } from "../../storeSlice";
 
-const Tab = {
-  "Store Settings": {
+const tabs = [
+  {
+    name: "Store Settings",
     tag: "STORE",
     children: [
-      {
-        "store info": "store_info",
-        "services rendered": "store_services",
-      },
+      { name: "Store Information", tag: "STORE" },
+      { name: "Services Rendered", tag: "store_services" },
     ],
   },
-  "Payment & Finances": {
+  {
+    name: "Payment & Finances",
     tag: "FINANCE",
     children: [
-      {
-        "store info": "payment",
-        "services rendered": "payment_services",
-      },
+      { name: "Payment Information", tag: "payment" },
+      { name: "Payment Services", tag: "payment_services" },
     ],
   },
-  // "User Edits",
-  // "Deletions",
-  // "View Logins",
-  // "Driver Locations",
-  // "Payroll",
-  // "Tips",
-  // "Completed Lessons",
-};
+  // Add more tabs as needed
+];
+
 function Sidebar({ onClick }) {
-  const [activeTab, setActiveTab] = useState("MANAGE");
+  const [activeTab, setActiveTab] = useState(null);
   const { selectedTab } = useSelector((state) => state.store);
   const dispatch = useDispatch();
 
-  const handleTabClick = (tab) => {
-    dispatch(setSelectedTab(tab));
+  const handleTabClick = (tag) => {
+    setActiveTab(activeTab === tag ? null : tag);
+    dispatch(setSelectedTab(tag));
   };
+
   return (
-    <div className=" basis-1/4">
+    <div className="basis-1/4 bg-gray-200 px-2 h-full ">
       <h1 className="text-3xl font-bold">Admin Settings</h1>
       <ul className="flex flex-col py-1.5">
-        {Object.keys(Tab).map((k, i) => {
-          return (
+        {tabs.map((tab, index) => (
+          <div key={index}>
             <li
-              key={i}
-              className={`py-0.5 text-[16px] font-medium cursor-pointer flex items-center justify-between ${
-                activeTab === Tab[k] ? "text-blue-500" : ""
-              }`}
-              onClick={() => {
-                setActiveTab(Tab[k].tag);
-                handleTabClick(Tab[k].tag);
-              }}
+              className={`py-0.5 leading-6 font-semibold  text-[16px] text-[#1e1f25] cursor-pointer flex items-center hover:text-blue-500 justify-between 
+              
+              `}
+              onClick={() => handleTabClick(tab.tag)}
             >
-              {Tab[k].tag} {Tab[k].children && <BiChevronDown />}
+              {tab.name}{" "}
+              {tab.children &&
+                (activeTab === tab.tag ? <BiChevronUp /> : <BiChevronDown />)}
             </li>
-          );
-        })}
+            {activeTab === tab.tag && tab.children && (
+              <ul className="px-2.5 text-sm">
+                {tab.children.map((child, childIndex) => (
+                  <li
+                    key={childIndex}
+                    className={` text-[16px]   cursor-pointer flex items-center hover:text-blue-500 hover:bg-white p-2.5 justify-between ${
+                      selectedTab === child.tag
+                        ? "text-blue-500 font-medium"
+                        : ""
+                    }`}
+                    onClick={() => dispatch(setSelectedTab(child.tag))}
+                  >
+                    {child.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
       </ul>
     </div>
   );

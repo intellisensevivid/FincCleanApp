@@ -26,6 +26,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     companyName,
     location,
+    country,
     numberOfStores,
   } = req.body;
   // verify that all fields were filled
@@ -46,6 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
     name: companyName,
     location,
     numberOfStores,
+    country,
   });
 
   const role = await Role.findOne({ name: "admin" }).lean().exec();

@@ -11,6 +11,7 @@ const authRegister = Joi.object().keys({
   phoneNumber: Joi.string().required(),
   companyName: Joi.string().required(),
   location: Joi.string().required(),
+  country: Joi.string().required(),
   numberOfStores: Joi.string().required(),
   subscription: Joi.string().optional(),
   cardNumber: Joi.number().optional(),
@@ -60,6 +61,13 @@ const customerCreate = Joi.object().keys({
   orders: Joi.string(),
 });
 
+const shiftCreate = Joi.object().keys({
+  user: Joi.string(),
+  task: Joi.string(),
+  Date: Joi.date(),
+  startTime: Joi.date(),
+  endTime: Joi.date(),
+});
 const appCustomerCreate = Joi.object().keys({
   email: Joi.string().email(),
   password: Joi.string().pattern(PASSWORD_REGEX).min(8).required(),
@@ -131,4 +139,5 @@ module.exports = {
   productCreate,
   productSectionCreate,
   orderCreate,
+  shiftCreate,
 };

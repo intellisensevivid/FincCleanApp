@@ -8,6 +8,13 @@ const getAllStores = asyncHandler(async (req, res) => {
   const stores = await Business.find({});
   res.status(200).json({ success: true, data: stores });
 });
+const getMyStores = asyncHandler(async (req, res) => {
+  const stores = await Business.findById(req.user.business);
+  if (!stores) {
+    return res.status(400).json({ message: "No store found" });
+  }
+  res.status(200).json({ success: true, data: stores });
+});
 
 // @desc    Get store by ID
 // @route   GET /api/stores/:id
@@ -26,13 +33,16 @@ const getStoreById = asyncHandler(async (req, res) => {
 // @route   GET /api/stores/search?name=:name
 // @access  Public
 const queryStore = asyncHandler(async (req, res) => {
-  const { name, location } = req.query;
+  const { name, location, country } = req.query;
   const query = {};
   if (name) {
     query["name"] = { $regex: name, $options: "i" };
   }
   if (location) {
     query["location"] = { $regex: location, $options: "i" };
+  }
+  if (country) {
+    query["country"] = { $regex: country, $options: "i" };
   }
   const stores = await Business.find(query);
 
@@ -79,6 +89,7 @@ const deleteStore = asyncHandler(async (req, res) => {
 module.exports = {
   getAllStores,
   getStoreById,
+  getMyStores,
   createStore,
   updateStore,
   deleteStore,

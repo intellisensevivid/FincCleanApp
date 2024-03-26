@@ -49,7 +49,7 @@ function ManageUser({ users }) {
   };
   const handleDeleteUser = async (user) => {
     // window.alert("Are you sure you want to delete?");
-    setSelectedUser(user);
+
     const res = await deleteStoreUser({
       userId: user._id,
     }).unwrap();
@@ -83,14 +83,14 @@ function ManageUser({ users }) {
       console.error(error);
     }
   };
-  const showDeleteConfirmation = () => {
+  const showDeleteConfirmation = (user) => {
     PopupModal({
       title: "Confirm Deletion",
       message: "Are you sure you want to delete this user?",
       buttons: [
         {
           label: "Yes",
-          onClick: handleDeleteUser,
+          onClick: () => handleDeleteUser(user),
         },
         {
           label: "No",

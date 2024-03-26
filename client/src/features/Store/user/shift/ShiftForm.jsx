@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function ShiftForm({ data, formType, onCLose, users, submit, error }) {
   const [selectUser, setSelectUser] = useState("");
   const [formData, setFormData] = useState({
     user: data?.user || "",
     startTime: data?.startTime || "",
-    endTime: data?.startTime,
+    endTime: data?.endTime || "",
     date: data?.date || "",
     task: data?.task || "",
   });
 
+  console.log(formData);
+  console.log(users);
+  useEffect(() => {
+    setFormData({
+      user: data?.user || users?.data[0]._id || "",
+      startTime: data?.startTime || "",
+      endTime: data?.endTime || "",
+      date: data?.date || "",
+      task: data?.task || "",
+    });
+  }, [data]);
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -73,12 +84,12 @@ function ShiftForm({ data, formType, onCLose, users, submit, error }) {
               <div className="flex flex-col">
                 <label className="block mb-2 font-semibold">Select Staff</label>
                 <select
-                  value={formData.name?.user}
+                  value={formData.user._id}
                   onChange={handleChange}
                   name="user"
                   className="bg-gray-300 p-1.5"
                 >
-                  <option>Select Staff</option>
+                  {/* <option>Select Staff</option> */}
                   {users.data.map((user, i) => {
                     return (
                       <option
@@ -100,31 +111,34 @@ function ShiftForm({ data, formType, onCLose, users, submit, error }) {
                   type="date"
                   onChange={handleChange}
                   name="date"
+                  value={formData.date}
                   id="date"
                   className="rounded-lg p-1.5 w-full outline-offset-0 border-none bg-gray-300 focus:bg-gray-100"
                 />
               </div>
               <div>
-                <label htmlFor="date" className="block mb-2 font-semibold">
+                <label htmlFor="startTime" className="block mb-2 font-semibold">
                   Clock in
                 </label>
                 <input
-                  type="time"
+                  type="datetime-local"
                   onChange={handleChange}
                   name="startTime"
+                  value={formData.startTime}
                   id="startTime"
                   className="rounded-lg p-1.5 w-full outline-offset-0 border-none bg-gray-300 focus:bg-gray-100"
                 />
               </div>
               <div>
-                <label htmlFor="date" className="block mb-2 font-semibold">
+                <label htmlFor="endTime" className="block mb-2 font-semibold">
                   Clock out
                 </label>
                 <input
-                  type="time"
+                  type="datetime-local"
                   onChange={handleChange}
                   name="endTime"
                   id="endTime"
+                  value={formData.endTime}
                   className="rounded-lg p-1.5 w-full outline-offset-0 border-none bg-gray-300 focus:bg-gray-100"
                 />
               </div>
@@ -137,6 +151,7 @@ function ShiftForm({ data, formType, onCLose, users, submit, error }) {
                 className="rounded-lg p-2.5 w-full outline-offset-0 border-none bg-gray-300 focus:bg-gray-100 resize-none "
                 onChange={handleChange}
                 name="task"
+                value={formData.task}
               ></textarea>
             </div>
             <button

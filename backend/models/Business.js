@@ -10,6 +10,10 @@ const BusinessSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    country: {
+      type: String,
+      required: true,
+    },
     numberOfStores: {
       type: String,
       required: true,

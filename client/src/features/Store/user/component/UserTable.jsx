@@ -70,7 +70,7 @@ const UserTable = ({ columns, data, onEdit, onDelete }) => {
                   <button onClick={() => onEdit(row.original)}>
                     <RiEdit2Line className="text-blue-500 text-xl" />
                   </button>
-                  {row.original.role.name !== "admin" && (
+                  {row.original.user?.role?.name !== "admin" && (
                     <button onClick={() => onDelete(row.original)}>
                       <FaTrash className="text-red-400 text-lg" />
                     </button>

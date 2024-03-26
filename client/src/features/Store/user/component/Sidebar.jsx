@@ -15,7 +15,7 @@ function Sidebar({ onClick }) {
   const [activeTab, setActiveTab] = useState("MANAGE");
   console.log(activeTab);
   return (
-    <div className=" basis-1/4">
+    <div className=" basis-1/4 h-full bg-gray-200 px-2  ">
       <h1 className="text-3xl font-bold">Users</h1>
       <ul className="flex flex-col py-1.5">
         {Object.keys(Tab).map((k, i) => {

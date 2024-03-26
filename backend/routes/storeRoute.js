@@ -8,9 +8,11 @@ const {
   getAllStores,
   queryStore,
   getStoreById,
+  getMyStores,
 } = require("../controllers/storeController");
 
 router.get("/search", queryStore);
+router.get("/account", verifyToken, getMyStores);
 router.get("/", verifyToken, getAllStores);
 router.get("/:businessId", getStoreById);
 

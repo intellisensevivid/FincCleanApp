@@ -273,14 +273,14 @@ const UserFormModal = ({
               </div>
 
               {/* pay details and role */}
-
               <div>
                 <div>
                   <label className="" htmlFor="hourlyRate">
                     Hourly rate
                   </label>
                   <input
-                    type="text"
+                    type="number"
+                    min={0}
                     onChange={handleChange}
                     value={formData.hourlyRate}
                     className="input w-full outline-offset-0 border-none focus-visible:outline-gray-300 bg-gray-300 focus:bg-gray-100"
@@ -294,7 +294,8 @@ const UserFormModal = ({
                     Monthly Pay
                   </label>
                   <input
-                    type="text"
+                    type="number"
+                    min={0}
                     onChange={handleChange}
                     value={formData.monthlyPay}
                     className="input w-full outline-offset-0 border-none focus-visible:outline-gray-300 bg-gray-300 focus:bg-gray-100"
@@ -308,7 +309,8 @@ const UserFormModal = ({
                     Weekly Hours
                   </label>
                   <input
-                    type="text"
+                    type="number"
+                    min={0}
                     onChange={handleChange}
                     value={formData.weeklyHours}
                     className="input w-full outline-offset-0 border-none focus-visible:outline-gray-300 bg-gray-300 focus:bg-gray-100"

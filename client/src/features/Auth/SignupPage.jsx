@@ -9,6 +9,7 @@ const SignupPage = () => {
   const [formData, setFormData] = useState({
     companyName: "",
     location: "",
+    country: "",
     numberOfStores: "1",
     fullName: "",
     phoneNumber: "",
@@ -119,6 +120,29 @@ const SignupPage = () => {
                     {validationErrors.companyName && (
                       <span className="block text-sm mt-2 text-red-500">
                         {validationErrors.companyName}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="location"
+                    className="block  font-semibold text-gray-700"
+                  >
+                    Country
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="country"
+                      name="country"
+                      type="text"
+                      required
+                      onChange={handleChange}
+                      className="input input-bordered bg-white border-gray-400 appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                    />
+                    {validationErrors.country && (
+                      <span className="block text-sm mt-2 text-red-500">
+                        {validationErrors.country}
                       </span>
                     )}
                   </div>

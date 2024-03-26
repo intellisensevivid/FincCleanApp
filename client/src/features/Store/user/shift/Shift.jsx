@@ -8,13 +8,16 @@ import {
 } from "./shitApiSlice";
 import { FaSpinner } from "react-icons/fa";
 import UserTable from "../component/UserTable";
+import PopupModal from "../../../../components/PopupModal";
+import { formatDate, formatTime } from "../../../../utils/date";
 
 function Shift({ users }) {
   const columns = [
-    { Header: "Name", accessor: "user" },
-    { Header: "Email", accessor: "clock-in" },
-    { Header: "Permission", accessor: "permissions.length" },
-    { Header: "Role", accessor: "role.name" },
+    { Header: "Name", accessor: "user.fullName" },
+    { Header: "Clock-in", accessor: "startTime" },
+    { Header: "Clock-out", accessor: "endTime" },
+    { Header: "Date", accessor: "date" },
+    { Header: "Message", accessor: "task" },
   ];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formType, setFormType] = useState("add");
@@ -25,7 +28,7 @@ function Shift({ users }) {
     useCreateShiftMutation();
   const [editShift, { isSuccess: editSuccess, error: editError }] =
     useEditShiftMutation();
-  // const [deleteShift,{isLoading,isError,error}] = useDeleteShiftMutation()
+  const [deleteShift] = useDeleteShiftMutation();
   const { data, isSuccess, isLoading, isError, error } = useGetAllSHiftsQuery();
 
   let content;
@@ -36,16 +39,58 @@ function Shift({ users }) {
   if (isLoading) {
     content = <FaSpinner className=" animate-spin text-blue-500" />;
   }
+
+  const showDeleteConfirmation = (data) => {
+    setSelectedShift(data);
+    PopupModal({
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete shift?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => handleDeleteShift(data),
+        },
+        {
+          label: "No",
+        },
+      ],
+      options: {
+        onClose: () => console.log("Modal closed"),
+      },
+    });
+  };
+
+  const handleEditShift = (shiftdata) => {
+    setFormType("edit");
+    setSelectedShift(shiftdata);
+    setIsModalOpen(true);
+  };
+  const handleDeleteShift = async (shiftdata) => {
+    const res = await deleteShift({
+      shiftId: shiftdata._id,
+    }).unwrap();
+  };
+
   if (isSuccess) {
+    const formattedData =
+      data.data.length > 0
+        ? data.data.map((item) => ({
+            ...item,
+            date: formatDate(item.date),
+            startTime: formatTime(item.startTime),
+            endTime: formatTime(item.endTime),
+            createdAt: formatDate(item.createdAt),
+            updatedAt: formatDate(item.updatedAt),
+          }))
+        : [];
+
     content =
       data.data.length > 0 ? (
         <UserTable
           columns={columns}
-          data={data.data}
-          onEdit={() => {
-            setFormType("edit");
-            setFormType(true);
-          }}
+          data={formattedData}
+          onEdit={handleEditShift}
+          onDelete={showDeleteConfirmation}
         />
       ) : (
         <p className="bg-blue-300 text-blue-500 mt-3">No Data found</p>
@@ -58,24 +103,18 @@ function Shift({ users }) {
 
     try {
       if (formType === "add") {
-        const user = await createShift(mutatedData).unwrap();
-        if (createSuccess) {
-          setIsModalOpen(false);
-        }
-        console.log(user);
+        const shift = await createShift(mutatedData).unwrap();
+        setIsModalOpen(false);
       } else if (formType === "edit") {
-        const user = await editShift({
-          userId: selectedShift._id,
+        const shift = await editShift({
+          shiftId: selectedShift._id,
           body: mutatedData,
         }).unwrap();
-        if (editSuccess) {
-          setIsModalOpen(false);
-        }
-        console.log(user);
+        setIsModalOpen(false);
       }
     } catch (error) {
       let errorMessage = error || editError || createError;
-      setFormError(errorMessage.message || error.message);
+      setFormError(errorMessage.data.error.details[0].message || error.message);
       setTimeout(() => {
         setFormError();
       }, 4000);
@@ -86,7 +125,7 @@ function Shift({ users }) {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center w-full">
-        <h1 className="text-3xl font-bold">Manage Users account</h1>
+        <h1 className="text-3xl font-bold">Users Hours</h1>
         <button
           onClick={() => {
             setFormType("add");
@@ -98,12 +137,11 @@ function Shift({ users }) {
         </button>
       </div>
       {content}
-
       {isModalOpen && (
         <ShiftForm
           users={users}
           onCLose={() => setIsModalOpen(false)}
-          data={data}
+          data={formType === "edit" ? selectedShift : null}
           formType={formType}
           submit={handleSubmit}
           error={formError}

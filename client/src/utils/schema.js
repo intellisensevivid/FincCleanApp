@@ -26,6 +26,7 @@ export const loginSchema = Joi.object().keys({
 export const signUpSchema = Joi.object().keys({
   companyName: Joi.string().required().label("Company Name"),
   location: Joi.string().required().label("City"),
+  country: Joi.string().required().label("Country"),
   numberOfStores: Joi.string()
     .valid("1", "2", "3", "4", "5", "6", "7", "8", "9", "10 or more")
     .required()

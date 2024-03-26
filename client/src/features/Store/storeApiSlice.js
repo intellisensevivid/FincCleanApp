@@ -2,14 +2,13 @@ import { apiSlice } from "../../app/apiSlice";
 
 export const storeApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getStore: builder.mutation({
-      query: (userData) => ({
-        url: "/auth/register",
-        method: "POST",
-        body: userData,
+    getStore: builder.query({
+      query: () => ({
+        url: "/store/account",
+        method: "GET",
       }),
     }),
   }),
 });
 
-export const { useGetStoreMutation } = storeApiSlice;
+export const { useGetStoreQuery } = storeApiSlice;
