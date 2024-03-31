@@ -8,6 +8,7 @@ const sendVerificationEmail = async ({ from, to, subject, text, html }) => {
     text,
     html,
   };
+  console.log(process.env.PASSWORD, process.env.EMAIL);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -15,8 +16,9 @@ const sendVerificationEmail = async ({ from, to, subject, text, html }) => {
       pass: process.env.PASSWORD,
     },
   });
-
-  return await transporter.sendMail(mailOptions);
+  const mail = await transporter.sendMail(mailOptions);
+  console.log(mail);
+  return mail;
 };
 
 module.exports = { sendVerificationEmail };

@@ -18,9 +18,9 @@ connectDB();
 app.use(
   cors({
     origin: [
+      "https://fincclean.vercel.app",
       "https://laundromat.eduos.com.ng",
       "http://localhost:5173",
-      "https://fincclean.vercel.app",
     ],
     credentials: true,
   })
@@ -31,6 +31,10 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.send("Welcome to FincCleanApp, your favorite laundry management system");
+});
+app.get("/roles", (req, res) => {
+  seedRoles();
+  res.send("Roles has been created");
 });
 
 app.use("/api/auth", authRoutes);

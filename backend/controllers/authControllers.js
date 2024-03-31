@@ -19,61 +19,67 @@ const { addDefaultProducts } = require("../seeders/seedProducts");
 // @route POST /api/auth/register
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
-  const {
-    fullName,
-    phoneNumber,
-    email,
-    password,
-    companyName,
-    location,
-    numberOfStores,
-  } = req.body;
-  // verify that all fields were filled
-  if (!fullName || !email || !password) {
-    return res.status(400).json({ message: "Please enter all fields" });
+  try {
+    const {
+      fullName,
+      phoneNumber,
+      email,
+      password,
+      companyName,
+      location,
+      numberOfStores,
+    } = req.body;
+    // verify that all fields were filled
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ message: "Please enter all fields" });
+    }
+
+    // check for existing user who is a business owner
+    const existingUser = await User.findOne({ email: email, isOwner: true });
+    console.log(existingUser);
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "A user with that email already exists" });
+    }
+
+    const newBusiness = await Business.create({
+      name: companyName,
+      location,
+      numberOfStores,
+    });
+    console.log(newBusiness);
+
+    const role = await Role.findOne({ name: "admin" }).lean().exec();
+    console.log(role);
+    const pin = generateSixDigitPin();
+    console.log(pin);
+    const send = await sendVerificationEmail({
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Verify your email",
+      text: `Hello, please enter this six digit pin to verify your email: ${pin}`,
+    });
+    console.log(send);
+
+    const newUser = await User.create({
+      fullName,
+      email,
+      password,
+      phoneNumber,
+      business: newBusiness._id,
+      role: role._id,
+      emailVerificationPin: pin,
+      isOwner: true,
+    });
+    console.log(newUser);
+    newBusiness.owner = newUser._id;
+    await newBusiness.save();
+
+    res.status(201).json({ message: "User registration successful" });
+  } catch (error) {
+    console.log(error);
   }
-
-  // check for existing user who is a business owner
-  const existingUser = await User.findOne({ email: email, isOwner: true });
-
-  if (existingUser) {
-    return res
-      .status(400)
-      .json({ message: "A user with that email already exists" });
-  }
-
-  const newBusiness = await Business.create({
-    name: companyName,
-    location,
-    numberOfStores,
-  });
-
-  const role = await Role.findOne({ name: "admin" }).lean().exec();
-
-  const pin = generateSixDigitPin();
-
-  await sendVerificationEmail({
-    from: process.env.EMAIL,
-    to: email,
-    subject: "Verify your email",
-    text: `Hello, please enter this six digit pin to verify your email: ${pin}`,
-  });
-
-  const newUser = await User.create({
-    fullName,
-    email,
-    password,
-    phoneNumber,
-    business: newBusiness._id,
-    role: role._id,
-    emailVerificationPin: pin,
-    isOwner: true,
-  });
-
-  newBusiness.owner = newUser._id;
-  await newBusiness.save();
-
-  res.status(201).json({ message: "User registration successful" });
 });
 
 // @desc  Verify user email
