@@ -4,8 +4,8 @@ import { logoutUser } from "../features/Auth/authSlice";
 
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://finccleanapp-backend.vercel.app/api",
-  // baseUrl: "http://localhost:3500/api",
+  baseUrl: "https://finccleanback.vercel.app/api",
+  // baseUrl: "http://localhost:5000/api",
   credentials: "include",
 });
 

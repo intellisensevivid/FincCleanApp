@@ -17,7 +17,11 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["https://laundromat.eduos.com.ng", "http://localhost:5173", "https://finccleanapp.vercel.app"],
+    origin: [
+      "https://laundromat.eduos.com.ng",
+      "http://localhost:5173",
+      "https://fincclean.vercel.app",
+    ],
     credentials: true,
   })
 );
@@ -34,7 +38,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
-// batch B of dev 
+// batch B of dev
 app.use("/api/shift", require("./routes/shiftRoute"));
 app.use("/api/payroll", require("./routes/payrollRoute"));
 app.use("/api/attendance", require("./routes/attendanceRoute"));
@@ -45,10 +49,9 @@ app.use("/api/store", require("./routes/storeRoute"));
 
 app.use(errorHandler);
 
-
-app.use("*", (req,res) => {
+app.use("*", (req, res) => {
   res.send("<h1>ROUTE NOT FOUND</h1>");
-})
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
