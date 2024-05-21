@@ -13,8 +13,6 @@ const productRoutes = require("./routes/productRoutes");
 const { errorHandler } = require("./middleware/errorHandler");
 const seedRoles = require("./seeders/seedRoles");
 
-connectDB();
-
 app.use(
   cors({
     origin: [
@@ -56,6 +54,15 @@ app.use(errorHandler);
 app.use("*", (req, res) => {
   res.send("<h1>ROUTE NOT FOUND</h1>");
 });
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+const runserver = () => {
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    })
+    .catch((error) => console.error(error.message));
+};
+
+runserver();
