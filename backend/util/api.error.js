@@ -25,7 +25,22 @@ class BadRequestError extends ApiError {
   }
 }
 
+/**
+ * @param {string} message
+ * @param {number} statusCode
+ * @returns {void}
+ */
+class PermissionDeniedError extends Error {
+  constructor(message = "") {
+    super(message);
+    this.message =
+      message || "You do not have permission to perform this action";
+    this.statusCode = StatusCodes.UNAUTHORIZED;
+  }
+}
+
 module.exports = {
   ApiError,
   BadRequestError,
+  PermissionDeniedError,
 };

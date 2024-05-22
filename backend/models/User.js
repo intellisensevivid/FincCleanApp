@@ -117,17 +117,17 @@ UserSchema.pre("save", function (next) {
   });
 });
 
-UserSchema.pre("findOneAndUpdate", function (next) {
-  const user = this.getUpdate();
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) return next(err);
-    bcrypt.hash(user.password, salt, (err, hash) => {
-      if (err) return next(err);
-      user.password = hash;
-      next();
-    });
-  });
-});
+// UserSchema.pre("findOneAndUpdate", function (next) {
+//   const user = this.getUpdate();
+//   bcrypt.genSalt(10, (err, salt) => {
+//     if (err) return next(err);
+//     bcrypt.hash(user.password, salt, (err, hash) => {
+//       if (err) return next(err);
+//       user.password = hash;
+//       next();
+//     });
+//   });
+// });
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   try {

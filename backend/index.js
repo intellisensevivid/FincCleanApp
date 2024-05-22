@@ -10,6 +10,7 @@ const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const productRoutes = require("./routes/productRoutes");
+const countryRoutes = require("./routes/country.route");
 const logger = require("morgan");
 const { errorHandler } = require("./middleware/errorHandler");
 const seedRoles = require("./seeders/seedRoles");
@@ -50,6 +51,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/countries", countryRoutes);
 // batch B of dev
 app.use("/api/shift", require("./routes/shiftRoute"));
 app.use("/api/payroll", require("./routes/payrollRoute"));

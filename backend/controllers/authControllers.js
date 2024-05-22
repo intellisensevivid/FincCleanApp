@@ -17,9 +17,10 @@ const {
   generateRefreshToken,
 } = require("../middleware/authMiddleware");
 const { addDefaultProducts } = require("../seeders/seedProducts");
-const { BadRequestError } = require("../util/api.error");
+const { ApiError, BadRequestError } = require("../util/api.error");
 const { StatusCodes } = require("http-status-codes");
 const Country = require("../models/country");
+const TokenBlacklist = require("../models/tokenBlacklist");
 
 // @desc  Register new user
 // @route POST /api/auth/register
@@ -220,6 +221,10 @@ const loginUser = async (req, res) => {
       email: user.email,
     });
 
+    await User.findByIdAndUpdate(user._id, {
+      lastLoginAt: new Date(),
+    });
+
     res.status(StatusCodes.OK).json({
       data: {
         accessToken,
@@ -266,15 +271,29 @@ const refresh = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Token refreshed" });
 });
 
-// @desc  Log out user
-// @route POST /api/auth/logout
-// @access Public
-const logOutUser = asyncHandler(async (req, res) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+/**
+ *
+ * @param {Request} req
+ * @param {Response} res
+ * @route POST /api/auth/logout
+ * @access protected
+ */
+const logOutUser = async (req, res) => {
+  try {
+    const { authorization } = req.headers;
+    const [_, token] = authorization.split(" ");
 
-  res.status(200).json({ message: "Log out successful" });
-});
+    await TokenBlacklist.create({ token });
+    res.status(StatusCodes.OK).json({
+      data: {
+        message: "Logout successful",
+      },
+      statusCode: StatusCodes.OK,
+    });
+  } catch (e) {
+    throw new ApiError(e.message);
+  }
+};
 
 // @desc  Forgot password (sends mail to reset password)
 // @route POST /api/auth/forgotPassword

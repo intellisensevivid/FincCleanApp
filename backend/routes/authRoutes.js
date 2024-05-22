@@ -97,6 +97,6 @@ router.post(
 );
 router.post("/forgotPassword", loginLimiter, forgotPassword);
 router.post("/resetPassword/:token", loginLimiter, resetPassword);
-router.post("/logout", logOutUser);
+router.post("/logout", verifyToken, logOutUser);
 
 module.exports = router;
