@@ -1,9 +1,12 @@
-const User = require("../models/User");
+require("express-async-errors");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
+const { validationResult, matchedData } = require("express-validator");
+const parseRequestError = require("../util/error.parser");
 const Business = require("../models/Business");
 const Role = require("../models/Role");
 const { sendVerificationEmail } = require("../util/mailing");
+const User = require("../models/User");
 const {
   generateSixDigitPin,
   generateResetToken,
@@ -14,6 +17,9 @@ const {
   generateRefreshToken,
 } = require("../middleware/authMiddleware");
 const { addDefaultProducts } = require("../seeders/seedProducts");
+const { BadRequestError } = require("../util/api.error");
+const { StatusCodes } = require("http-status-codes");
+const Country = require("../models/country");
 
 // @desc  Register new user
 // @route POST /api/auth/register
@@ -82,6 +88,53 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+/**
+ * @param {Request} req
+ * @param {Response} res
+ * @route /POST /api/auth/register/client
+ * @desc creates a new user for the client
+ * @access public
+ */
+const registerAppUser = async (req, res) => {
+  try {
+    const error = parseRequestError(validationResult(req));
+
+    if (error) {
+      throw new BadRequestError(error);
+    }
+
+    const {
+      fullName,
+      email,
+      country: countryCode,
+      phoneNumber,
+      password,
+    } = matchedData(req);
+
+    const { _id: country } = await Country.findOne({
+      code: countryCode,
+    }).select("_id");
+
+    const { _id: role } = await Role.findOne({ name: "custom" }).select("_id");
+
+    const user = new User({
+      fullName,
+      email,
+      country,
+      phoneNumber,
+      password,
+      role,
+    });
+    await user.save();
+
+    res
+      .status(StatusCodes.CREATED)
+      .json({ data: user.toObject(), statusCode: StatusCodes.CREATED });
+  } catch (e) {
+    throw new BadRequestError(e?.message);
+  }
+};
+
 // @desc  Verify user email
 // @route POST /api/auth/verifyEmail
 // @access Public
@@ -127,60 +180,57 @@ const verifyEmail = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "User email verification successful" });
 });
 
-// @desc  Login user
-// @route POST api/auth/login
-// @access Public
-const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  // verify that all fields were filled
-  if (!email || !password) {
-    return res.status(400).json({ message: "Please enter all fields" });
+/**
+ * @param {Request} req
+ * @param {Response} res
+ * @route POST /api/auth/login
+ * @desc provide access token for user authentication
+ * @access public
+ * @throws {Error} when email and password do not match any registered user
+ */
+const loginUser = async (req, res) => {
+  try {
+    const error = parseRequestError(validationResult(req));
+
+    if (error) {
+      throw new BadRequestError(error);
+    }
+
+    const { email, password } = matchedData(req);
+
+    // check that user exist
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      throw new BadRequestError("No account associated with given email");
+    }
+
+    const comparePassword = await user.comparePassword(password);
+
+    if (!comparePassword) {
+      throw new BadRequestError("Password is incorrect");
+    }
+
+    const { accessToken } = generateAccessToken({
+      id: user._id,
+      email: user.email,
+    });
+    const { refreshToken } = generateRefreshToken({
+      id: user._id,
+      email: user.email,
+    });
+
+    res.status(StatusCodes.OK).json({
+      data: {
+        accessToken,
+        refreshToken,
+      },
+      statusCode: StatusCodes.OK,
+    });
+  } catch (e) {
+    throw new BadRequestError(e?.message);
   }
-
-  // check that user exist
-  const user = await User.findOne({ email })
-    .populate("business")
-    .populate("role");
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
-
-  const comparePassword = await user.comparePassword(password);
-  if (!comparePassword) {
-    return res.status(400).json({ message: "Incorrect email or password" });
-  }
-
-  const { accessToken } = generateAccessToken({
-    id: user._id,
-    email: user.email,
-  });
-  const { refreshToken } = generateRefreshToken({
-    id: user._id,
-    email: user.email,
-  });
-
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 15 * 60 * 1000, // 15 minutes (match accessToken expiration)
-  });
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 30 * 24 * 60 * 60 * 1000, //30 days (match refreshToken expiration)
-  });
-
-  const foundUser = await User.findOne({ email })
-    .populate("business")
-    .populate("role")
-    .select("-password");
-
-  res
-    .status(200)
-    .json({ message: "Login success", data: foundUser, accessToken });
-});
+};
 
 // @desc  Refresh token
 // @route GET /api/auth/refresh
@@ -315,6 +365,7 @@ const configureStore = asyncHandler(async (req, res) => {
 
 module.exports = {
   registerUser,
+  registerAppUser,
   verifyEmail,
   configureStore,
   loginUser,

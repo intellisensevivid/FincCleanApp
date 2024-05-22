@@ -10,8 +10,10 @@ const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const productRoutes = require("./routes/productRoutes");
+const logger = require("morgan");
 const { errorHandler } = require("./middleware/errorHandler");
 const seedRoles = require("./seeders/seedRoles");
+const seedCountries = require("./seeders/seedCountries");
 
 app.use(
   cors({
@@ -26,6 +28,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(logger("dev"));
 
 app.get("/", (req, res) => {
   res.send("Welcome to FincCleanApp, your favorite laundry management system");
@@ -33,6 +36,13 @@ app.get("/", (req, res) => {
 app.get("/roles", (req, res) => {
   seedRoles();
   res.send("Roles has been created");
+});
+
+app.get("/seed-countries", (req, res) => {
+  seedCountries();
+  res.status(200).json({
+    message: "Countries has been created",
+  });
 });
 
 app.use("/api/auth", authRoutes);
@@ -52,7 +62,10 @@ app.use("/api/store", require("./routes/storeRoute"));
 app.use(errorHandler);
 
 app.use("*", (req, res) => {
-  res.send("<h1>ROUTE NOT FOUND</h1>");
+  res.status(404).send({
+    error: "Not Found",
+    statusCode: 404,
+  });
 });
 
 const runserver = () => {

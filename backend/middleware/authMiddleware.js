@@ -24,7 +24,7 @@ const verifyToken = asyncHandler(async (req, res, next) => {
 
 const generateAccessToken = ({ id, email }) => {
   const accessToken = jwt.sign({ id, email }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "15d",
   });
   return {
     accessToken,
@@ -33,7 +33,7 @@ const generateAccessToken = ({ id, email }) => {
 
 const generateRefreshToken = ({ id, email }) => {
   const refreshToken = jwt.sign({ id, email }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
+    expiresIn: "1d",
   });
   return {
     refreshToken,
