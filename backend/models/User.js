@@ -51,6 +51,7 @@ const UserSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       required: true,
+      unique: true,
       validate: {
         validator: function (v) {
           return /^\+[0-9]{1,3}[0-9]{7,15}$/gi.test(v);
