@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema(
@@ -12,9 +13,14 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    country: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Country",
+    },
     password: {
       type: String,
       required: true,
+      select: false,
     },
     role: {
       type: mongoose.Schema.Types.ObjectId,
@@ -45,6 +51,12 @@ const UserSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v) {
+          return /^\+[0-9]{1,3}[0-9]{7,15}$/gi.test(v);
+        },
+        message: "Please enter a valid phone number",
+      },
     },
     profilePicture: {
       type: String,
@@ -85,8 +97,12 @@ const UserSchema = new mongoose.Schema(
     },
     lastLoginAt: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true, toObject: { useProjection: true } }
 );
+
+UserSchema.plugin(uniqueValidator, {
+  message: "User with {PATH} already exists",
+});
 
 UserSchema.pre("save", function (next) {
   const user = this;
@@ -101,21 +117,21 @@ UserSchema.pre("save", function (next) {
   });
 });
 
-UserSchema.pre("findOneAndUpdate", function (next) {
-  const user = this.getUpdate();
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) return next(err);
-    bcrypt.hash(user.password, salt, (err, hash) => {
-      if (err) return next(err);
-      user.password = hash;
-      next();
-    });
-  });
-});
+// UserSchema.pre("findOneAndUpdate", function (next) {
+//   const user = this.getUpdate();
+//   bcrypt.genSalt(10, (err, salt) => {
+//     if (err) return next(err);
+//     bcrypt.hash(user.password, salt, (err, hash) => {
+//       if (err) return next(err);
+//       user.password = hash;
+//       next();
+//     });
+//   });
+// });
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   try {
-    const isMatch = await bcrypt.compare(candidatePassword, this.password);
+    const isMatch = bcrypt.compareSync(candidatePassword, this.password);
     return isMatch;
   } catch (error) {
     throw new Error(error);

@@ -1,30 +1,52 @@
+require("express-async-errors");
 const jwt = require("jsonwebtoken");
-const asyncHandler = require("express-async-handler");
 const User = require("../models/User");
+const { BadRequestError, PermissionDeniedError } = require("../util/api.error");
+const TokenBlacklist = require("../models/tokenBlacklist");
 
-const verifyToken = asyncHandler(async (req, res, next) => {
-  const { accessToken } = req.cookies;
-  if (!accessToken) {
-    return res.status(401).send("Not Authorized, no token");
+const verifyToken = async (req, res, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    throw new PermissionDeniedError(
+      "Authentication credentials were not provided"
+    );
   }
-  jwt.verify(accessToken, process.env.JWT_SECRET, async (err, decodedUser) => {
+
+  const [bearer, token] = authorization.split(" ");
+
+  if (!bearer || !token || bearer !== "Bearer") {
+    throw new BadRequestError(
+      "Authentication credentials were not properly formed"
+    );
+  }
+
+  // check if token is blacklisted
+
+  const isBlacklisted = await TokenBlacklist.findOne({ token });
+
+  if (isBlacklisted) {
+    throw new BadRequestError("Invalid credential. Token is no longer valid");
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
     if (err) {
-      return res.status(401).send("Not Authorized, invalid token");
+      throw new BadRequestError(err);
     }
-    const foundUser = await User.findOne({ _id: decodedUser.id })
-      .populate("role", "name")
-      .lean();
-    if (!foundUser) {
-      return res.status(401).send("Unauthorized! User not found");
-    }
-    req.user = foundUser;
+
+    const user = await User.findById(decoded.id)
+      .populate({ path: "country", select: "-_id" })
+      .populate("role")
+      .populate("business");
+
+    req.user = user;
     next();
   });
-});
+};
 
 const generateAccessToken = ({ id, email }) => {
   const accessToken = jwt.sign({ id, email }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "15d",
   });
   return {
     accessToken,
@@ -33,7 +55,7 @@ const generateAccessToken = ({ id, email }) => {
 
 const generateRefreshToken = ({ id, email }) => {
   const refreshToken = jwt.sign({ id, email }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
+    expiresIn: "1d",
   });
   return {
     refreshToken,
