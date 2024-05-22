@@ -80,12 +80,15 @@ router.post("/verifyEmail", loginLimiter, verifyEmail);
 router.post("/configureStore", loginLimiter, verifyToken, configureStore);
 router.post(
   "/login",
-  body("email")
+  body("phoneNumber")
     .notEmpty()
     .withMessage("This field is required")
-    .isEmail()
-    .withMessage("Please enter a valid email address")
-    .normalizeEmail()
+    .custom(async (value) => {
+      const phoneRegex = /^\+[0-9]{1,3}[0-9]{7,15}$/gi;
+      if (!phoneRegex.test(value)) {
+        throw new Error("Please enter a valid phone number");
+      }
+    })
     .escape(),
   body("password")
     .notEmpty()

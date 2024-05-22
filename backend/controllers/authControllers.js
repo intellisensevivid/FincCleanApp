@@ -197,10 +197,10 @@ const loginUser = async (req, res) => {
       throw new BadRequestError(error);
     }
 
-    const { email, password } = matchedData(req);
+    const { phoneNumber, password } = matchedData(req);
 
     // check that user exist
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ phoneNumber }).select("+password");
 
     if (!user) {
       throw new BadRequestError("No account associated with given email");
