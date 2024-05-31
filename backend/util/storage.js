@@ -10,7 +10,7 @@ cloudinary.config({
 });
 
 const storage = multer.diskStorage({
-  destination: "./uploads",
+  destination: "/tmp/uploads",
   filename: function (req, file, cb) {
     cb(null, file.fieldname + "-" + file.originalname);
   },
