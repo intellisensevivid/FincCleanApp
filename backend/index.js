@@ -1,9 +1,7 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-require("dotenv").config({ path: "./config/.env" });
-const PORT = process.env.PORT;
+const { config } = require("dotenv");
 const connectDB = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -11,10 +9,15 @@ const orderRoutes = require("./routes/orderRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const productRoutes = require("./routes/productRoutes");
 const countryRoutes = require("./routes/country.route");
+const serviceRoutes = require("./routes/service.routes");
 const logger = require("morgan");
 const { errorHandler } = require("./middleware/errorHandler");
 const seedRoles = require("./seeders/seedRoles");
 const seedCountries = require("./seeders/seedCountries");
+config();
+
+const app = express();
+const PORT = process.env.PORT;
 
 app.use(
   cors({
@@ -28,7 +31,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(logger("dev"));
 
 app.get("/", (req, res) => {
@@ -52,6 +55,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/countries", countryRoutes);
+app.use("/api/services", serviceRoutes);
 // batch B of dev
 app.use("/api/shift", require("./routes/shiftRoute"));
 app.use("/api/payroll", require("./routes/payrollRoute"));
