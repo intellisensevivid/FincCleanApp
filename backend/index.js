@@ -12,6 +12,8 @@ const countryRoutes = require("./routes/country.routes");
 const serviceRoutes = require("./routes/service.routes");
 const vendorRoutes = require("./routes/vendor.routes");
 const reviewRoutes = require("./routes/review.routes");
+const walletRoutes = require("./routes/wallet.routes");
+const transactionRoutes = require("./routes/transaction.routes");
 const logger = require("morgan");
 const { errorHandler } = require("./middleware/error.handler");
 const seedRoles = require("./seeders/roles.seed");
@@ -60,6 +62,8 @@ app.use("/api/countries", countryRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/vendors", vendorRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/wallet", walletRoutes);
+app.use("/api/transactions", transactionRoutes);
 // batch B of dev
 app.use("/api/shift", require("./routes/shift.routes"));
 app.use("/api/payroll", require("./routes/payroll.routes"));
