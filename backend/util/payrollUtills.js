@@ -1,5 +1,5 @@
-const Attendance = require("../models/attendance");
-const Payroll = require("../models/payroll");
+const Attendance = require("../models/attendance.model");
+const Payroll = require("../models/payroll.model");
 
 async function calculatePayroll(
   businessId,

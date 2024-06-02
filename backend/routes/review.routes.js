@@ -4,7 +4,7 @@ const {
   createReview,
   getReviews,
 } = require("../controllers/review.controllers");
-const { verifyToken } = require("../middleware/authMiddleware");
+const { verifyToken } = require("../middleware/auth.middleware");
 
 const router = Router();
 
