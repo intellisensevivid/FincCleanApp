@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const uniqueValidator = require('mongoose-unique-validator');
+const uniqueValidator = require("mongoose-unique-validator");
 
 const ServiceSchema = new Schema({
   name: {
@@ -15,6 +15,10 @@ const ServiceSchema = new Schema({
     trim: true,
     required: true,
   },
+});
+
+ServiceSchema.plugin(uniqueValidator, {
+  message: "{PATH} already exists.",
 });
 
 module.exports = model("Service", ServiceSchema);

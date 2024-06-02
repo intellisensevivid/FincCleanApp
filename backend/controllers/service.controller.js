@@ -1,7 +1,6 @@
 require("express-async-errors");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../util/api.error");
-const parseRequestError = require("../util/error.parser");
 const Service = require("../models/service.model");
 const { v2: cloudinary } = require("cloudinary");
 
