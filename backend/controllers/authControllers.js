@@ -19,7 +19,7 @@ const {
 const { addDefaultProducts } = require("../seeders/seedProducts");
 const { ApiError, BadRequestError } = require("../util/api.error");
 const { StatusCodes } = require("http-status-codes");
-const Country = require("../models/country");
+const Country = require("../models/country.model");
 const TokenBlacklist = require("../models/tokenBlacklist");
 
 // @desc  Register new user

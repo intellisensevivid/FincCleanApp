@@ -15,7 +15,7 @@ const {
 
 router.get("/store", verifyToken, getAllUsers);
 router.get("/roles", verifyToken, getRoles);
-router.get("/:userId", verifyToken, getUserDetails);
+router.get("/:userId", getUserDetails);
 router.post(
   "/create",
   schemaValidator("userCreate"),

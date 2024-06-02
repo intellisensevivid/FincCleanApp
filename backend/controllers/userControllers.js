@@ -1,23 +1,38 @@
+require("express-async-errors");
+const asyncHandler = require("express-async-handler");
+const { StatusCodes } = require("http-status-codes");
+const { BadRequestError } = require("../util/api.error");
 const User = require("../models/User");
 const Role = require("../models/Role");
-const asyncHandler = require("express-async-handler");
 const {
   permissionsData,
   isValidPermission,
 } = require("../config/RolesAndPermission");
 const Business = require("../models/Business");
 
-// @desc  Get user details
-// @route GET api/users/:userId
-// @access Private
-const getUserDetails = asyncHandler(async (req, res) => {
-  const id = req.params.userId;
-  const user = await User.find({ _id: id });
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+/**
+ * @param {Request} req
+ * @param {Response} res
+ * @description returns detail about the user in the request params
+ * @protected
+ * @returns detail about the user in the request params
+ */
+
+const getUserDetails = async (req, res) => {
+  try {
+    const id = req.params.userId;
+    const user = await User.findById(id)
+      .populate("country", ["-__v"])
+      .populate("role", ["_id", "name"]);
+
+    res.status(StatusCodes.OK).json({
+      data: user,
+      statusCode: StatusCodes.OK,
+    });
+  } catch (e) {
+    throw new BadRequestError(e.message);
   }
-  res.status(200).json(user);
-});
+};
 
 // @desc  Create new user (employees)
 // @route POST api/users/create

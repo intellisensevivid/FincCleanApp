@@ -15,7 +15,7 @@ const {
 const schemaValidator = require("../middleware/schemaValidator");
 const { loginLimiter } = require("../middleware/loginLimiter");
 const { verifyToken } = require("../middleware/authMiddleware");
-const Country = require("../models/country");
+const Country = require("../models/country.model");
 
 router.get("/refresh", loginLimiter, refresh);
 router.post("/register", schemaValidator("authRegister"), registerUser);

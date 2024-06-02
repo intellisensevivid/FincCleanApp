@@ -1,5 +1,5 @@
 const { getCodes, getNames } = require("country-list");
-const Country = require("../models/country");
+const Country = require("../models/country.model");
 
 const codes = getCodes();
 const names = getNames();

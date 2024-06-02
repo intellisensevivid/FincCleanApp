@@ -1,6 +1,6 @@
 require("express-async-errors");
 const { StatusCodes } = require("http-status-codes");
-const Country = require("../models/country");
+const Country = require("../models/country.model");
 const { ApiError } = require("../util/api.error");
 
 const getCountries = async (req, res) => {
