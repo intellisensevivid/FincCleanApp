@@ -112,19 +112,19 @@ const registerAppUser = async (req, res) => {
       password,
     } = matchedData(req);
 
-    const { _id: country } = await Country.findOne({
+    const country = await Country.findOne({
       code: countryCode,
     }).select("_id");
 
-    const { _id: role } = await Role.findOne({ name: "custom" }).select("_id");
+    const role = await Role.findOne({ name: "custom" }).select("_id");
 
     const user = new User({
       fullName,
       email,
-      country,
+      country: country?._id,
       phoneNumber,
       password,
-      role,
+      role: role?._id,
     });
     await user.save();
 

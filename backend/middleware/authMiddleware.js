@@ -39,6 +39,13 @@ const verifyToken = async (req, res, next) => {
       .populate("role")
       .populate("business");
 
+    if (!user) {
+      res.status(401).json({
+        error: "No user associated with given token",
+        statusCode: 401
+      })
+    }
+
     req.user = user;
     next();
   });

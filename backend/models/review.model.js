@@ -24,4 +24,21 @@ const ReviewSchema = new Schema({
   },
 });
 
+ReviewSchema.statics.getAverageReview = async function (vendor) {
+  let count = 0;
+  const reviews = await this.find({ vendor })
+    .select(["_id", "rating"])
+    .populate("user", ["_id", "fullName", "email"]);
+
+  reviews.forEach((element) => {
+    count += element.rating;
+  });
+
+  let rating = count / reviews.length;
+  rating = Math.round(rating) === rating ? `${rating}.0` : rating;
+  const output = String(rating).split(".");
+
+  return `${output[0]}.${output[1][0]}`;
+};
+
 module.exports = model("Review", ReviewSchema);
