@@ -6,9 +6,9 @@ const OrderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    customer: {
+    vendor: {
       type: mongoose.Schema.ObjectId,
-      ref: "Customer",
+      ref: "Vendor",
     },
     items: [
       {

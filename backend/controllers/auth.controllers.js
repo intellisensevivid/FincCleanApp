@@ -7,6 +7,7 @@ const Business = require("../models/business.model");
 const Role = require("../models/role.model");
 const { sendVerificationEmail } = require("../util/mailing");
 const User = require("../models/user.model");
+const Wallet = require("../models/wallet.model");
 const {
   generateSixDigitPin,
   generateResetToken,
@@ -127,6 +128,8 @@ const registerAppUser = async (req, res) => {
       role: role?._id,
     });
     await user.save();
+
+    await Wallet.create({ user: user._id });
 
     res
       .status(StatusCodes.CREATED)
